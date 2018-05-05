@@ -13,9 +13,26 @@ jobs:
             docker build -f multistage.Dockerfile -t skomo/flask-docker-demo-small:$SHORT_GIT_HASH .
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
             docker push skomo/flask-docker-demo-small:$SHORT_GIT_HASH
-
+  test:
+    machine:
+      enabled: true
+    steps:
+      - checkout
+      - run:
+          name: Test Image
+          command: |
+            set -x
+            SHORT_GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+            docker pull skomo/flask-docker-demo-small:$SHORT_GIT_HASH
+            docker run --rm  -it skomo/flask-docker-demo-small:$SHORT_GIT_HASH /app/tests.py
+    
 workflows:
   version: 2
-  build:
+  build_and_test:
     jobs:
       - build
+      - test:
+          requires:
+            - build
+
