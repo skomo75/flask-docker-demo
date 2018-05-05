@@ -25,7 +25,7 @@ jobs:
             SHORT_GIT_HASH=$(echo $CIRCLE_SHA1 | cut -c -7)
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
             docker pull skomo/flask-docker-demo-small:$SHORT_GIT_HASH
-            docker run --rm  -it skomo/flask-docker-demo-small:$SHORT_GIT_HASH /app/tests.py
+            docker run --rm  -it skomo/flask-docker-demo-small:$SHORT_GIT_HASH python /app/tests.py
     
 workflows:
   version: 2
